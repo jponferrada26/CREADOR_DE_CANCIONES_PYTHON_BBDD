@@ -7,8 +7,8 @@
 from Cancion import Cancion
 import MySQLdb
 
-
-def crearCancion():
+#Crear una nueva cancion e inserta dicha canción en la BBDD
+def crearCancionBBDD():
     new_cancion = Cancion(str(raw_input("Titulo: ")),str(raw_input("Autor: ")),int(raw_input("Codigo cancion:")))
     titulo = new_cancion.getTitulo()
     autor = new_cancion.getAutor()
@@ -21,7 +21,8 @@ def crearCancion():
     conn.commit()
     conn.close()
 
-def mostrarCanciones():
+#Mostrar las canciones de la BBDD
+def mostrarCancionesBBDD():
     conn = MySQLdb.connect("127.0.0.1","root","","CANCIONES")
 
     cursor = conn.cursor()
@@ -33,8 +34,10 @@ def mostrarCanciones():
 
     conn.commit()
     conn.close()
-def borrarCancion():
-    mostrarCanciones()
+
+#Borrar una cancion de la BBDD
+def borrarCancionBBDD():
+    mostrarCancionesBBDD()
     codigoCancion = int(raw_input("Codigo de cancion a borrar: "))
     conn = MySQLdb.connect("127.0.0.1","root","","CANCIONES")
 
@@ -44,35 +47,123 @@ def borrarCancion():
     conn.commit()
     conn.close()
 
-def imprimirOpcionesMenu():
-    opciones = "--MENU--\n"
+#Imprimir opciones del menu BBDD
+def imprimirOpcionesMenuBBDD():
+    opciones = "--MENU-BBDD--\n"
     opciones += "1- Crear nueva cancion.\n"
     opciones += "2- Mostrar canciones.\n"
     opciones += "3- Borrar cancion.\n"
     opciones += "4- Salir."
     print opciones
 
-def gestionarOpcionesMenu(opcion):
+#Gestiona la opcion BBDD seleccionada por el usuario
+def gestionarOpcionesMenuBBDD(opcion):
     if opcion== 1:
         try:
-            crearCancion()
+            crearCancionBBDD()
         except:
             print "Error:al crear una nuva cancion."
     elif opcion == 2:
-        mostrarCanciones()
+        mostrarCancionesBBDD()
     elif opcion == 3:
         try:
-            borrarCancion()
+            borrarCancionBBDD()
         except:
-            print "Error: al borrar la cancion."
+           print "Error: al borrar la cancion."
 
-def solicitarOpcionesMenu():
+#Solicitar al usuario las opcion del menu BBDD
+def solicitarOpcionesMenuBBDD():
     while True:
-        imprimirOpcionesMenu()
-        opcion = int (raw_input("Opcion: "))
-        gestionarOpcionesMenu(opcion)
-        if(opcion == 4):
-            break
+        try:
+            imprimirOpcionesMenuBBDD()
+            opcion = int (raw_input("Opcion: "))
+            gestionarOpcionesMenuBBDD(opcion)
+            if(opcion == 4):
+                break
+        except:
+            print "Opcion incorrecta."
+
+#Escribir una nueva cancion en un fichero de texto
+def escribirNuevaCancionFichero():
+    fichero = open("canciones.txt",'a')
+    new_cancion = Cancion(str(raw_input("Titulo: ")),str(raw_input("Autor: ")),int(raw_input("Codigo cancion:")))
+    titulo = new_cancion.getTitulo()
+    autor = new_cancion.getAutor()
+    codigo = str(new_cancion.getCodigo())
+    fichero.write(codigo+", "+titulo+", "+autor+"\n")
+    fichero.close()
+
+#Leer todas las canciones del fichero de texto
+def leerCanciones():
+    fichero = open("canciones.txt",'r')
+    print fichero.read()
+    fichero.close()
+
+#Vaciar todos los datos que contiene el arhivos de texto
+def vaciarArchivo():
+     fichero = open("canciones.txt",'w')
+     fichero.write("")
+     fichero.close()
+
+#Imprimir las opciones del menu de ficheros
+def imprimirOpcionesMenuFichero():
+    opciones = "--MENU-FICHERO--\n"
+    opciones += "1- Escribir nueva cancion.\n"
+    opciones += "2- Leer canciones.\n"
+    opciones += "3- Borrar contenido fichero.\n"
+    opciones += "4- Salir."
+    print opciones
+
+#Gestionar las opciones del menu de ficheros
+def gestionarOpcionesMenuFichero(opcion):
+    if opcion== 1:
+        try:
+            escribirNuevaCancionFichero()
+        except:
+            print "Error al escribir el fichero."
+    elif opcion == 2:
+       leerCanciones()
+    elif opcion == 3:
+       vaciarArchivo()
+
+#Solicitar las opciones del menu de ficheros
+def solicitarOpcionesMenuFichero():
+    while True:
+        try:
+            imprimirOpcionesMenuFichero()
+            opcion = int (raw_input("Opcion: "))
+            gestionarOpcionesMenuFichero(opcion)
+            if(opcion == 4):
+                break
+        except:
+            print "Opcion incorrecta."
 
 
-solicitarOpcionesMenu()
+#Imprimir las opciones del menu general
+def imprimirOpcionesMenuGeneral():
+    opciones = "--MENU-GENERAL--\n"
+    opciones += "1- Base de datos.\n"
+    opciones += "2- Fichero.\n"
+    opciones += "3- Salir."
+    print opciones
+
+#Gestionar las opciones del menu general
+def gestionarOpcionesMenuGeneral(opcion):
+    if opcion== 1:
+        solicitarOpcionesMenuBBDD()
+    elif opcion == 2:
+        solicitarOpcionesMenuFichero()
+
+#Solicita al usuario la opcion que desee del menu general
+def solicitarOpcionesGeneral():
+    while True:
+        try:
+            imprimirOpcionesMenuGeneral()
+            opcion = int (raw_input("Opcion: "))
+            gestionarOpcionesMenuGeneral(opcion)
+            if(opcion == 3):
+                break
+        except:
+            print "Opcion incorrecta."
+
+solicitarOpcionesGeneral()
